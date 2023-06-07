@@ -53,11 +53,12 @@ public class SistemSalud {
 
     public void testear() {
         for(Persona p:this.listaPersonas){
+            int temperatura = (int)(Math.random()*(39 - 36 + 1) + 36);
+            Registro registro = new Registro(p.getDNI(),temperatura);
+            this.listaTesteados.add(registro);
             try {
                 quitarReactivo();
-                int temperatura = (int)(Math.random()*(39 - 36 + 1) + 36);
-                Registro registro = new Registro(p.getDNI(),temperatura);
-                this.listaTesteados.add(registro);
+
             }catch(ReactivoException e2){
                 System.out.println("ERROR REACTIVO: "+e2.getMessage());
             }
@@ -73,18 +74,18 @@ public class SistemSalud {
         }
     }
     public void aislar(){
-        try{
-            for(Registro r:this.listaTesteados){
-                if(r.getTemperatura() >= 38) {
-                    Persona buscado = buscarPersona(r.getDni());
-                    if(buscado != null){
-                        this.aislarPersona(buscado,r);
-                    }
+        for(Registro r:this.listaTesteados){
+            if(r.getTemperatura() >= 38) {
+                Persona buscado = buscarPersona(r.getDni());
+                if(buscado != null){try{
+                    this.aislarPersona(buscado,r);
+                }catch(AislarException e1){
+                    System.out.println("ALERTA AISLAR PERSONA: "+e1.getMessage());
+                }
                 }
             }
-        }catch(AislarException e1){
-            System.out.println("ALERTA AISLAR PERSONA: "+e1.getMessage());
         }
+
     }
 
     public void aislarPersona(Persona buscado, Registro r) throws AislarException {
